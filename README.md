@@ -22,7 +22,7 @@
 #### 安装和运行
 1. 克隆这个项目到你的本地机器：
 ```bash
-git clone https://github.com/yourusername/selfrating.git
+git clone https://github.com/xu0w0xu/selfrating.git
 ```
 
 2. 使用 Android Studio 打开这个项目，并确保你已经安装了最新版本的 Android SDK 和 Gradle。
