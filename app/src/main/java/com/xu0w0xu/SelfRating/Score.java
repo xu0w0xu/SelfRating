@@ -9,6 +9,8 @@ public class Score {
     public int id;
     public int score;
     public String date;
+    public int scoreChange;
+    public int maxScore;
 }
 
 

@@ -229,7 +229,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="16sp"
-                    android:text="最高分"/>
+                    android:text="分数变化"/>
 
                 <View
                     android:layout_width="1dp"
@@ -243,7 +243,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:textSize="16sp"
-                    android:text="最低分"/>
+                    android:text="最高分"/>
             </LinearLayout>
 
             <View
@@ -253,13 +253,11 @@
                 android:background="@color/black"
                 android:layout_below="@id/_title"/>
 
-            <FrameLayout
-                android:id="@+id/fragment_container"
+            <ListView
+                android:id="@+id/score_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:layout_below="@id/line1"
-                />
+                android:layout_below="@id/line1" />
         </RelativeLayout>
     </RelativeLayout>
 

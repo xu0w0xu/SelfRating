@@ -10,10 +10,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -22,13 +25,18 @@ public class MainActivity extends AppCompatActivity {
     private TextView scoreText;
     private int score = 0;
     private AppDatabase db; // 作为成员变量定义
+    private ListView listView;
+    private ScoreAdapter adapter;
+    private List<Score> scoreList = new ArrayList<>();
 
     // 全局变量，用于存储最大值和最小值
     private int globalMaxScore = Integer.MIN_VALUE;
     private int globalMinScore = Integer.MAX_VALUE;
+
     public int getGlobalMaxScore() {
         return globalMaxScore;
     }
+
     public int getGlobalMinScore() {
         return globalMinScore;
     }
@@ -45,16 +53,13 @@ public class MainActivity extends AppCompatActivity {
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "score-database").build();
 
-        //找到Fragment和editScore的按钮
-        Button openFragment = (Button) findViewById(R.id.openFragment);
+        //找到editScore的按钮
         Button editScore = (Button) findViewById(R.id.editScore);
 
-        openFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openScoreFragment();
-            }
-        });
+        // 初始化ListView和Adapter
+        listView = findViewById(R.id.score_list);
+        adapter = new ScoreAdapter(this, scoreList);
+        listView.setAdapter(adapter);
 
         // 设置editScore的点击事件为弹出一个对话框来修改分数
         editScore.setOnClickListener(new View.OnClickListener() {
@@ -82,28 +87,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // 从数据库中获取上一次的分数
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                List<Score> scores = db.scoreDao().getAll();
-                Log.d("MainActivity", "Scores from database: " + scores);
-                if (!scores.isEmpty()) {
-                    Score lastScore = scores.get(scores.size() - 1);
-                    score = lastScore.score;
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateScore();
-                            // 在获取分数并更新 UI 后，插入新的分数
-                            insertScoreToDatabase(db, score);
-                        }
-                    });
-                } else {
-                    // 如果没有获取到分数（例如，在第一次运行应用时），插入一个初始分数
-                    insertScoreToDatabase(db, score);
-                }
-            }
-        }).start();
+        fetchScoresFromDatabase();
 
         scoreText = (TextView) findViewById(R.id.score);
         updateScore();
@@ -121,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 changeScore(1);
             }
-
         });
         plusTwo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -161,18 +144,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 创建一个新方法来将分数保存到数据库
-    private void insertScoreToDatabase(AppDatabase db, int score) {
+    private void insertScoreToDatabase(AppDatabase db, int score, int scoreChange, int maxScore) {
         Score newScore = new Score();
         newScore.score = score;
         newScore.date = getCurrentDate();
+        newScore.scoreChange = scoreChange;  // 保存分数变化
+        newScore.maxScore = maxScore;  // 保存最高分
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 db.scoreDao().insertAll(newScore);
+                fetchScoresFromDatabase();
             }
         }).start();
     }
+
     private void updateScore() {
         scoreText.setText(String.valueOf(score));
     }
@@ -183,24 +170,37 @@ public class MainActivity extends AppCompatActivity {
         return sdf.format(new Date());
     }
 
-    private void openScoreFragment() {
-        ScoreFragment fragment = new ScoreFragment();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .commit();
-    }
-
     //改变分数
     public void changeScore(int delta) {
+        int oldScore = score;
         score += delta;
+        int scoreChange = score - oldScore;
+        int maxScore = Math.max(score, globalMaxScore);
         if (score > globalMaxScore) {
             globalMaxScore = score;
         }
-        if (score < globalMinScore) {
-            globalMinScore = score;
-        }
         updateScore();
-        insertScoreToDatabase(db, score);  // 将新的分数保存到数据库
-        openScoreFragment();    //更新Fragment
+        insertScoreToDatabase(db, score, scoreChange, maxScore);  // 将新的分数、分数变化和最高分保存到数据库
+    }
+
+
+    // 从数据库中获取分数并更新ListView
+    private void fetchScoresFromDatabase() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Score> scores = db.scoreDao().getAll();
+                Log.d("MainActivity", "Scores from database: " + scores);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        scoreList.clear();
+                        scoreList.addAll(scores);
+                        Collections.sort(scoreList, (s1, s2) -> s2.date.compareTo(s1.date));
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        }).start();
     }
 }

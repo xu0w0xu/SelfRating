@@ -31,15 +31,15 @@ public class ScoreAdapter extends ArrayAdapter<Score> {
 
         TextView date = convertView.findViewById(R.id.date);
         TextView finalScore = convertView.findViewById(R.id.final_score);
-        TextView highestScore = convertView.findViewById(R.id.highest_score);
-        TextView lowestScore = convertView.findViewById(R.id.lowest_score);
+        TextView change_score = convertView.findViewById(R.id.change_score);
+        TextView highest_score = convertView.findViewById(R.id.highest_score);
 
-        // 这里需要根据你的数据库设计来更新 TextView 的内容
         date.setText(score.date);
-        finalScore.setText(String.valueOf(score.score)); // 假设这是当天最后的分数
-        highestScore.setText(""); // 这里应该显示当天的最高分
-        lowestScore.setText(""); // 这里应该显示当天的最低分
+        finalScore.setText(String.valueOf(score.score));
+        change_score.setText(String.valueOf(score.scoreChange));  // 显示分数变化
+        highest_score.setText(String.valueOf(score.maxScore));  // 显示最高分
 
         return convertView;
     }
+
 }
