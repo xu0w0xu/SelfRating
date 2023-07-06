@@ -1,4 +1,4 @@
-package com.xu0w0xu.SelfRating;
+package com.xu0w0xu.SelfRating.Models;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

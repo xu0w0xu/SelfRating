@@ -1,9 +1,11 @@
-package com.xu0w0xu.SelfRating;
+package com.xu0w0xu.SelfRating.Database.Dao;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
+
+import com.xu0w0xu.SelfRating.Models.Score;
 
 import java.util.List;
 

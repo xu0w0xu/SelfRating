@@ -1,4 +1,4 @@
-package com.xu0w0xu.SelfRating;
+package com.xu0w0xu.SelfRating.Activities;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +13,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.xu0w0xu.SelfRating.Adapters.ScoreAdapter;
+import com.xu0w0xu.SelfRating.Database.AppDatabase;
+import com.xu0w0xu.SelfRating.R;
+import com.xu0w0xu.SelfRating.Models.Score;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

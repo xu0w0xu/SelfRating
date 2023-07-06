@@ -1,4 +1,4 @@
-package com.xu0w0xu.SelfRating;
+package com.xu0w0xu.SelfRating.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.xu0w0xu.SelfRating.R;
+import com.xu0w0xu.SelfRating.Models.Score;
 
 import java.util.List;
 
